@@ -27,16 +27,23 @@ if (jQuery)(function($) {
 					var control = $('<a class="selectBox" />'),
 						inline = select.attr('multiple') || parseInt(select.attr('size')) > 1;
 					var settings = data || {};
-					control.width(select.outerWidth()).addClass(select.attr('class')).attr('title', select.attr('title') || '').attr('tabindex', parseInt(select.attr('tabindex'))).css('display', 'inline-block').bind('focus.selectBox', function() {
-						if (this !== document.activeElement && document.body !== document.activeElement) $(document.activeElement).blur();
-						if (control.hasClass('selectBox-active')) return;
-						control.addClass('selectBox-active');
-						select.trigger('focus');
-					}).bind('blur.selectBox', function() {
-						if (!control.hasClass('selectBox-active')) return;
-						control.removeClass('selectBox-active');
-						select.trigger('blur');
-					});
+					control
+                        .width(select.outerWidth())
+                        .addClass(select.attr('class'))
+                        .attr('title', select.attr('title') || '')
+                        .attr('tabindex', parseInt(select.attr('tabindex')))
+                        .css('display', 'inline-block').bind('focus.selectBox', function() {
+						    if (this !== document.activeElement && document.body !== document.activeElement) $(document.activeElement).blur();
+						    if (control.hasClass('selectBox-active')) return;
+						    control.addClass('selectBox-active');
+						    select.trigger('focus');
+					    })
+                        .bind('blur.selectBox', function() {
+						    if (!control.hasClass('selectBox-active')) return;
+						    control.removeClass('selectBox-active');
+						    select.trigger('blur');
+					    });
+
 					if (!$(window).data('selectBox-bindings')) {
 						$(window).data('selectBox-bindings', true).bind('scroll.selectBox', hideMenus).bind('resize.selectBox', hideMenus);
 					}
@@ -223,11 +230,24 @@ if (jQuery)(function($) {
 					if (control.hasClass('selectBox-disabled')) return false;
 					hideMenus();
 					var borderBottomWidth = isNaN(control.css('borderBottomWidth')) ? 0 : parseInt(control.css('borderBottomWidth'));
+
+                    // If options menu must be autowidth or select width
+                    var autoWidth
+                    if(settings.autoWidth == true){
+                        autoWidth = 'auto'
+                        options.addClass('selectBox-dropdown-menu-autoWidth')
+                    }else{
+                        autoWidth = select.outerWidth();
+                    }
+
 					// Menu position
-					options.width(control.innerWidth()).css({
-						top: control.offset().top + control.outerHeight() - borderBottomWidth,
-						left: control.offset().left
-					});
+					options
+                        .width(autoWidth)
+                        .css({
+						    top: control.offset().top + control.outerHeight() - borderBottomWidth,
+						    left: control.offset().left
+					    });
+
 					if (select.triggerHandler('beforeopen')) return false;
 					var dispatchOpenEvent = function() {
 							select.triggerHandler('open', {
