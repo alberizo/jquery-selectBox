@@ -44,9 +44,6 @@ if (jQuery)(function($) {
 						    select.trigger('blur');
 					    });
 
-					if (!$(window).data('selectBox-bindings')) {
-						$(window).data('selectBox-bindings', true).bind('scroll.selectBox', hideMenus).bind('resize.selectBox', hideMenus);
-					}
 					if (select.attr('disabled')) control.addClass('selectBox-disabled');
 					// Focus on control when label is clicked
 					select.bind('click.selectBox', function(event) {
@@ -287,15 +284,36 @@ if (jQuery)(function($) {
 
                     if(settings.withFilters == true){
                         var input_filter = options.find('input:text:visible:first');
-                        input_filter.val('');
+                        //input_filter.val('');
                         setTimeout(function(){
                             input_filter.focus();
                         }, 10);
 
+                        // If jquery.livesearch.js is available
                         if($.fn.search){
-                            console.log('si')
-                        }else{
-                            console.log('no')
+                            var li_list = options.find('ul li');
+
+                            input_filter.not('.search_plugin')
+                                .search(li_list, function(on){
+                                    on.reset(function(){
+                                        options.find('.empty').hide();
+                                        li_list.show();
+                                    });
+
+                                    on.empty(function(){
+                                        options.find('.empty').show();
+                                        li_list.hide();
+                                    });
+
+                                    on.results(function(results){
+                                        options.find('.empty').hide();
+                                        li_list.hide();
+                                        li_list.filter(results).show();
+                                    });
+                                });
+
+                            input_filter.addClass('search_plugin');
+
                         }
 
                     }
@@ -428,7 +446,7 @@ if (jQuery)(function($) {
 					}
 				};
 			var handleKeyDown = function(select, event) {
-					//
+    				//
 					// Handles open/close and arrow key functionality
 					//
 					select = $(select);

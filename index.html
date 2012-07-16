@@ -4,91 +4,40 @@
 		<title>jQuery selectBox (select replacement plugin)</title>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<script type="text/javascript" src="jquery.selectBox.js"></script>
+        <script type="text/javascript" src="jquery.livesearch.js"></script>
 		<link type="text/css" rel="stylesheet" href="jquery.selectBox.css" />
 
 		<script type="text/javascript">
 
 			$(document).ready( function() {
-
-				//
-				// Enable selectBox control and bind events
-				//
-
-				$("#create").click( function() {
-					$("SELECT").selectBox();
-				});
-
-				$("#destroy").click( function() {
-					$("SELECT").selectBox('destroy');
-				});
-
-				$("#enable").click( function() {
-					$("SELECT").selectBox('enable');
-				});
-
-				$("#disable").click( function() {
-					$("SELECT").selectBox('disable');
-				});
-
-				$("#serialize").click( function() {
-					$("#console").append('<br />-- Serialized data --<br />' + $("FORM").serialize().replace(/&/g, '<br />') + '<br /><br />');
-					$("#console")[0].scrollTop = $("#console")[0].scrollHeight;
-				});
-
-				$("#value-1").click( function() {
-					$("SELECT").selectBox('value', 1);
-				});
-
-				$("#value-2").click( function() {
-					$("SELECT").selectBox('value', 2);
-				});
-
-				$("#value-2-4").click( function() {
-					$("SELECT").selectBox('value', [2, 4]);
-				});
-
-				$("#options").click( function() {
-					$("SELECT").selectBox('options', {
-
-						'Opt Group 1': {
-							'1': 'Value 1',
-							'2': 'Value 2',
-							'3': 'Value 3',
-							'4': 'Value 4',
-							'5': 'Value 5'
-						},
-						'Opt Group 2': {
-							'6': 'Value 6',
-							'7': 'Value 7',
-							'8': 'Value 8',
-							'9': 'Value 9',
-							'10': 'Value 10'
-						},
-						'Opt Group 3': {
-							'11': 'Value 11',
-							'12': 'Value 12',
-							'13': 'Value 13',
-							'14': 'Value 14',
-							'15': 'Value 15'
-						}
-
-					});
-				});
-
-				$("#default").click( function() {
-					$("SELECT").selectBox('settings', {
-						'menuTransition': 'default',
-						'menuSpeed' : 0
-					});
-				});
-
-
-				$("SELECT")
-					.selectBox({autoWidth: true, withFilters: true})
+				$('select').selectBox({autoWidth: true, withFilters: true})
 
 			});
 
-		</script>
+
+            $('#asdftest').search($('ul.asdftest li'), function(on){
+                on.reset(function(){
+                    $('#none').hide();
+                    $('ul.asdftest li').show();
+                });
+
+                on.empty(function(){
+                    $('#none').show();
+                    $('ul.asdftest li').hide();
+                });
+
+                on.results(function(results){
+                    $('#none').hide();
+                    $('ul.asdftest li').hide();
+                    console.log(results)
+                    $('ul.asdftest li').filter(results).show();
+                });
+            });
+
+
+
+
+        </script>
 
 	</head>
 
@@ -117,14 +66,14 @@
 			<p>
 				<label for="standard-dropdown">Standard Dropdown</label><br />
 				<select id="standard-dropdown" name="standard-dropdown" class="custom-class1 custom-class2" style="width: 200px;">
-					<option value="1" class="test-class-1">Item 1</option>
-					<option value="2" class="test-class-2" selected="selected">Item 2</option>
+					<option value="1" class="test-class-1">Uno</option>
+					<option value="2" class="test-class-2" selected="selected">Dos</option>
 					<option value="3" class="test-class-3">Item 3 has a really long label that will not interfere with the control's width</option>
-					<option value="4" class="test-class-4">Item 4</option>
+					<option value="4" class="test-class-4">Tres</option>
 					<option value="5" disabled="disabled">Item 5 (disabled)</option>
-					<option value="6">Item 6</option>
-					<option value="7">Item 7</option>
-					<option value="8">Item 8</option>
+					<option value="6">Cuatro</option>
+					<option value="7">Cinco</option>
+					<option value="8">Seis</option>
 					<option value="9">Item 9</option>
 					<option value="10">Item 10</option>
 					<option value="11">Item 11</option>
@@ -139,6 +88,24 @@
 					<option value="20">Item 20</option>
 				</select>
 			</p>
+
+            <input type="text" id="asdftest" autocomplete="off" />
+
+            <ul class="asdftest">
+                <li>Uno</li>
+                <li>Dos</li>
+                <li>Tres</li>
+                <li>Cuatro</li>
+                <li>Cinco</li>
+                <li>Seis</li>
+                <li>Siete</li>
+                <li>Ocho</li>
+                <li>Nueve</li>
+                <li>Diez</li>
+                <li>Once</li>
+
+
+            </ul>
         <!--
 			<p>
 				Empty Dropdown<br />
