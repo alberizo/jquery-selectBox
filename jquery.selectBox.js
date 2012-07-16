@@ -115,6 +115,11 @@ if (jQuery)(function($) {
 						var labelWidth = control.width() - arrow.outerWidth() - parseInt(label.css('paddingLeft')) - parseInt(label.css('paddingLeft'));
 						label.width(labelWidth);
 						disableSelection(control);
+
+                        if(settings.withFilters == true){
+                            createFilterForm(options);
+                        }
+
 					}
 					// Store data for later use and show the control
 					select.addClass('selectBox').data('selectBox-control', control).data('selectBox-settings', settings).hide();
@@ -143,7 +148,8 @@ if (jQuery)(function($) {
 									options = _getOptions($(this), options);
 								}
 							});
-							// Return the built strin
+
+							// Return the built string
 							return options;
 						};
 					switch (type) {
@@ -164,7 +170,7 @@ if (jQuery)(function($) {
 						disableSelection(options);
 						return options;
 					case 'dropdown':
-						options = $('<ul class="selectBox-dropdown-menu selectBox-options" />');
+						options = $('<div class="selectBox-dropdown-menu selectBox-options"><ul></ul></div>');
 						options = _getOptions(select, options);
 						options.data('selectBox-select', select).css('display', 'none').appendTo('BODY').find('A').bind('mousedown.selectBox', function(event) {
 							event.preventDefault(); // Prevent options from being "dragged"
@@ -245,7 +251,8 @@ if (jQuery)(function($) {
                         .width(autoWidth)
                         .css({
 						    top: control.offset().top + control.outerHeight() - borderBottomWidth,
-						    left: control.offset().left
+						    left: control.offset().left,
+                            minWidth: select.outerWidth()
 					    });
 
 					if (select.triggerHandler('beforeopen')) return false;
@@ -266,6 +273,7 @@ if (jQuery)(function($) {
 						options.show(settings.menuSpeed, dispatchOpenEvent);
 						break;
 					}
+
 					if (!settings.menuSpeed) dispatchOpenEvent();
 					// Center on selected option
 					var li = options.find('.selectBox-selected:first');
@@ -276,6 +284,21 @@ if (jQuery)(function($) {
 						if ($(event.target).parents().andSelf().hasClass('selectBox-options')) return;
 						hideMenus();
 					});
+
+                    if(settings.withFilters == true){
+                        var input_filter = options.find('input:text:visible:first');
+                        input_filter.val('');
+                        setTimeout(function(){
+                            input_filter.focus();
+                        }, 10);
+
+                        if($.fn.search){
+                            console.log('si')
+                        }else{
+                            console.log('no')
+                        }
+
+                    }
 				};
 			var hideMenus = function() {
 					if ($(".selectBox-dropdown-menu:visible").length === 0) return;
@@ -640,8 +663,15 @@ if (jQuery)(function($) {
 					li.append(a);
 					if (self.attr('disabled')) li.addClass('selectBox-disabled');
 					if (self.attr('selected')) li.addClass('selectBox-selected');
-					options.append(li);
+					options.find('ul:first-child').append(li);
 				};
+
+            var createFilterForm = function(options){
+                options.prepend('<div class="filter"><input type="text" name="q" autocomplete="off" /></div>')
+
+            }
+
+
 			//
 			// Public methods
 			//

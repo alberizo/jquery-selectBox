@@ -28,6 +28,11 @@
 	border-color: #666;
 }
 
+.selectBox-dropdown-menu ul{
+    margin: 0;
+    padding: 0;
+}
+
 .selectBox-dropdown.selectBox-menuShowing {
 	-moz-border-radius-bottomleft: 0;
 	-moz-border-radius-bottomright: 0;
