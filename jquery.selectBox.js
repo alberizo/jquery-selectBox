@@ -13,6 +13,8 @@ if (jQuery)(function($) {
 		selectBox: function(method, data) {
 			var typeTimer, typeSearch = '',
 				isMac = navigator.platform.match(/mac/i);
+            var public_settings;
+
 			//
 			// Private methods
 			//
@@ -27,6 +29,8 @@ if (jQuery)(function($) {
 					var control = $('<a class="selectBox" />'),
 						inline = select.attr('multiple') || parseInt(select.attr('size')) > 1;
 					var settings = data || {};
+                    public_settings = settings; // I make public settings for all plugin
+
 					control
                         .width(select.outerWidth())
                         .addClass(select.attr('class'))
@@ -98,9 +102,13 @@ if (jQuery)(function($) {
 								showMenu(select);
 							}
 						}).bind('keydown.selectBox', function(event) {
-							handleKeyDown(select, event);
+                            if(!public_settings.withFilters){
+							    handleKeyDown(select, event);
+                            }
 						}).bind('keypress.selectBox', function(event) {
-							handleKeyPress(select, event);
+                            if(!public_settings.withFilters){
+							    handleKeyPress(select, event);
+                            }
 						}).bind('open.selectBox', function(event, triggerData) {
 							if (triggerData && triggerData._selectBox === true) return;
 							showMenu(select);
@@ -313,7 +321,6 @@ if (jQuery)(function($) {
                                 });
 
                             input_filter.addClass('search_plugin');
-
                         }
 
                     }
@@ -686,7 +693,6 @@ if (jQuery)(function($) {
 
             var createFilterForm = function(options){
                 options.prepend('<div class="filter"><input type="text" name="q" autocomplete="off" /></div>')
-
             }
 
 
