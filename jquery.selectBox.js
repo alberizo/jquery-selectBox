@@ -29,6 +29,7 @@ if (jQuery)(function($) {
 					var control = $('<a class="selectBox" />'),
 						inline = select.attr('multiple') || parseInt(select.attr('size')) > 1;
 					var settings = data || {};
+                    settings.multipleSelect = select.data('multiple-select');
                     public_settings = settings; // I make public settings for all plugin
 
 					control
@@ -189,8 +190,10 @@ if (jQuery)(function($) {
 							} else {
 								options.removeData('selectBox-down-at-x').removeData('selectBox-down-at-y');
 							}
-							selectOption(select, $(this).parent());
-							hideMenus();
+							selectOption(select, $(this).parent(), event);
+                            if(!public_settings.multipleSelect){
+							    hideMenus();
+                            }
 						}).bind('mouseover.selectBox', function(event) {
 							addHover(select, $(this).parent());
 						}).bind('mouseout.selectBox', function(event) {
@@ -207,12 +210,28 @@ if (jQuery)(function($) {
 					}
 				};
 			var getLabelClass = function(select) {
-					var selected = $(select).find('OPTION:selected');
+					var selected = $(select).find('option:selected');
 					return ('selectBox-label ' + (selected.attr('class') || '')).replace(/\s+$/, '');
 				};
 			var getLabelText = function(select) {
-					var selected = $(select).find('OPTION:selected');
-					return selected.text() || '\u00A0';
+					var selected = '';
+
+                    if(public_settings.multipleSelect){
+                        if(control = select.data('selectBox-control')){
+                            var options = control.data('selectBox-options');
+                            var string_label = '';
+                            options.find('li.selectBox-selected').each(function(){
+                                if($(this).text()){
+                                    string_label += $(this).text() + ', ';
+                                }
+                            });
+                            selected = string_label.substring(0, string_label.length-2);
+                        }
+                    }else{
+                        selected = $(select).find('option:selected').text();
+                    }
+
+					return selected || '\u00A0';
 				};
 			var setLabel = function(select) {
 					select = $(select);
@@ -245,8 +264,12 @@ if (jQuery)(function($) {
                     // If options menu must be autowidth or select width
                     var autoWidth
                     if(settings.autoWidth == true){
-                        autoWidth = 'auto'
-                        options.addClass('selectBox-dropdown-menu-autoWidth')
+                        if(options.width() - 10 > select.outerWidth()){
+                            autoWidth = 'auto'
+                            options.addClass('selectBox-dropdown-menu-autoWidth')
+                        }else{
+                            autoWidth = select.outerWidth();
+                        }
                     }else{
                         autoWidth = select.outerWidth();
                     }
@@ -363,61 +386,69 @@ if (jQuery)(function($) {
 					});
 				};
 			var selectOption = function(select, li, event) {
-					select = $(select);
-					li = $(li);
-					var control = select.data('selectBox-control'),
-						settings = select.data('selectBox-settings');
-					if (control.hasClass('selectBox-disabled')) return false;
-					if (li.length === 0 || li.hasClass('selectBox-disabled')) return false;
-					if (select.attr('multiple')) {
-						// If event.shiftKey is true, this will select all options between li and the last li selected
-						if (event.shiftKey && control.data('selectBox-last-selected')) {
-							li.toggleClass('selectBox-selected');
-							var affectedOptions;
-							if (li.index() > control.data('selectBox-last-selected').index()) {
-								affectedOptions = li.siblings().slice(control.data('selectBox-last-selected').index(), li.index());
-							} else {
-								affectedOptions = li.siblings().slice(li.index(), control.data('selectBox-last-selected').index());
-							}
-							affectedOptions = affectedOptions.not('.selectBox-optgroup, .selectBox-disabled');
-							if (li.hasClass('selectBox-selected')) {
-								affectedOptions.addClass('selectBox-selected');
-							} else {
-								affectedOptions.removeClass('selectBox-selected');
-							}
-						} else if ((isMac && event.metaKey) || (!isMac && event.ctrlKey)) {
-							li.toggleClass('selectBox-selected');
-						} else {
-							li.siblings().removeClass('selectBox-selected');
-							li.addClass('selectBox-selected');
-						}
-					} else {
-						li.siblings().removeClass('selectBox-selected');
-						li.addClass('selectBox-selected');
-					}
-					if (control.hasClass('selectBox-dropdown')) {
-						control.find('.selectBox-label').text(li.text());
-					}
-					// Update original control's value
-					var i = 0,
-						selection = [];
-					if (select.attr('multiple')) {
-						control.find('.selectBox-selected A').each(function() {
-							selection[i++] = $(this).attr('rel');
-						});
-					} else {
-						selection = li.find('A').attr('rel');
-					}
-					// Remember most recently selected item
-					control.data('selectBox-last-selected', li);
-					// Change callback
-					if (select.val() !== selection) {
-						select.val(selection);
-						setLabel(select);
-						select.trigger('change');
-					}
-					return true;
-				};
+                select = $(select);
+                li = $(li);
+                var control = select.data('selectBox-control'),
+                    settings = select.data('selectBox-settings');
+                if (control.hasClass('selectBox-disabled')) return false;
+                if (li.length === 0 || li.hasClass('selectBox-disabled')) return false;
+
+                if (select.attr('multiple')) {
+                    // If event.shiftKey is true, this will select all options between li and the last li selected
+                    if ((event.shiftKey && control.data('selectBox-last-selected'))) {
+                        li.toggleClass('selectBox-selected');
+                        var affectedOptions;
+                        if (li.index() > control.data('selectBox-last-selected').index()) {
+                            affectedOptions = li.siblings().slice(control.data('selectBox-last-selected').index(), li.index());
+                        } else {
+                            affectedOptions = li.siblings().slice(li.index(), control.data('selectBox-last-selected').index());
+                        }
+                        affectedOptions = affectedOptions.not('.selectBox-optgroup, .selectBox-disabled');
+                        if (li.hasClass('selectBox-selected')) {
+                            affectedOptions.addClass('selectBox-selected');
+                        } else {
+                            affectedOptions.removeClass('selectBox-selected');
+                        }
+                    } else if ((isMac && event.metaKey) || (!isMac && event.ctrlKey)) {
+                        li.toggleClass('selectBox-selected');
+                    } else {
+                        li.siblings().removeClass('selectBox-selected');
+                        li.addClass('selectBox-selected');
+                    }
+                } else if(settings.multipleSelect) {
+                    li.toggleClass('selectBox-selected');
+                } else {
+                    li.siblings().removeClass('selectBox-selected');
+                    li.addClass('selectBox-selected');
+                }
+                if (control.hasClass('selectBox-dropdown')) {
+                    control.find('.selectBox-label').text(li.text());
+                }
+                // Update original control's value
+                var i = 0,
+                    selection = [];
+                if (select.attr('multiple')) {
+                    control.find('.selectBox-selected A').each(function() {
+                        selection[i++] = $(this).attr('rel');
+                    });
+                } else if(public_settings.multipleSelect){
+                    li.parent('ul').find('.selectBox-selected a').each(function() {
+                        selection[i++] = $(this).attr('rel');
+                    });
+                } else {
+                    selection = li.find('A').attr('rel');
+                }
+
+                // Remember most recently selected item
+                control.data('selectBox-last-selected', li);
+                // Change callback
+                if (select.val() !== selection) {
+                    select.val(selection);
+                    setLabel(select);
+                    select.trigger('change');
+                }
+                return true;
+            };
 			var addHover = function(select, li) {
 					select = $(select);
 					li = $(li);

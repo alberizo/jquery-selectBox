@@ -10,7 +10,7 @@
 		<script type="text/javascript">
 
 			$(document).ready( function() {
-				$('select').selectBox({autoWidth: true, withFilters: true})
+				$('select').selectBox({autoWidth: true, withFilters: true, multipleSelect: true})
 
 			});
 
@@ -65,16 +65,16 @@
 
 			<p>
 				<label for="standard-dropdown">Standard Dropdown</label><br />
-				<select id="standard-dropdown" name="standard-dropdown" class="custom-class1 custom-class2" style="width: 200px;">
-					<option value="1" class="test-class-1">Uno</option>
-					<option value="2" class="test-class-2" selected="selected">Dos</option>
-					<option value="3" class="test-class-3">Item 3 has a really long label that will not interfere with the control's width</option>
-					<option value="4" class="test-class-4">Tres</option>
-					<option value="5" disabled="disabled">Item 5 (disabled)</option>
-					<option value="6">Cuatro</option>
-					<option value="7">Cinco</option>
-					<option value="8">Seis</option>
-					<option value="9">Item 9</option>
+				<select id="standard-dropdown" name="standard-dropdown" class="custom-class1 custom-class2" style="width: 200px;" data-multiple-select="true">
+                    <option value=""></option>
+                    <option value="one">Uno</option>
+					<option value="two">Dos</option>
+					<option value="four">Cuatro</option>
+					<option value="three">Tres</option>
+					<option value="four">Cuatro</option>
+					<option value="five">Cinco</option>
+					<option value="six">Seis</option>
+					<option value="nine">Item 9</option>
 					<option value="10">Item 10</option>
 					<option value="11">Item 11</option>
 					<option value="12">Item 12</option>

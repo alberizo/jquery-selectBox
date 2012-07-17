@@ -93,6 +93,9 @@
 
 
 /* Options */
+.selectBox-options{
+    overflow-x: hidden;
+}
 .selectBox-options,
 .selectBox-options LI,
 .selectBox-options LI A {

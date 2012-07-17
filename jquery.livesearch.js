@@ -37,7 +37,6 @@
         callbacks.all && callbacks.all.call(this, $(selector));
         return callbacks.reset && callbacks.reset.call(this);
       };
-        console.log('ee')
     }
 
     $(this).on('keypress', perform);
