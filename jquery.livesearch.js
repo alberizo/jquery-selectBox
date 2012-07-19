@@ -39,10 +39,7 @@
       };
     }
 
-    $(this).on('keypress', perform);
-    $(this).on('keydown', perform);
     $(this).on('keyup', perform);
-    $(this).on('blur', perform);
 
   }
 })(jQuery);
