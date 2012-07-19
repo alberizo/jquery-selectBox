@@ -119,6 +119,14 @@ if (jQuery)(function($) {
                     label.width(labelWidth);
                     disableSelection(control);
 
+                    if($(select).data('multipleSelect')){
+                        var select_multiple_hidden_name =  $(select).attr('name') + '_multiple';
+                        var select_multiple_hidden = $('<input type="hidden" name="'+ select_multiple_hidden_name +'" />');
+                        $(select)
+                            .before(select_multiple_hidden)
+                            .data('selectBox-multiple-hidden', select_multiple_hidden)
+                    }
+
                     if($(select).data('withFilters')){
                         createFilterForm(options);
                     }
@@ -456,13 +464,18 @@ if (jQuery)(function($) {
                 // Update original control's value
                 var i = 0,
                     selection = [];
+
                 if (select.attr('multiple')) {
                     control.find('.selectBox-selected A').each(function() {
-                        selection[i++] = $(this).attr('rel');
+                        if(rel = $(this).attr('rel')){
+                            selection[i++] = rel;
+                        }
                     });
                 } else if($(select).data('multipleSelect')){
                     li.parent('ul').find('.selectBox-selected a').each(function() {
-                        selection[i++] = $(this).attr('rel');
+                        if(rel = $(this).attr('rel')){
+                            selection[i++] = rel;
+                        }
                     });
                 } else {
                     selection = li.find('A').attr('rel');
@@ -473,6 +486,11 @@ if (jQuery)(function($) {
                 // Change callback
                 if (select.val() !== selection) {
                     select.val(selection);
+
+                    if(select.data('multipleSelect')){
+                        select.data('selectBox-multiple-hidden').val(selection.join());
+                    }
+
                     setLabel(select);
                     select.trigger('change');
                 }
